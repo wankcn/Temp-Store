@@ -8,6 +8,7 @@ public class ESSaveManager
 {
     #region Save
 
+
     // Object
     public static void Save(string key, object value)
     {
@@ -163,4 +164,90 @@ public class ESSaveManager
     }
 
     #endregion
+
+     #region Load
+
+        public static object Load(string key)
+        {
+            return ES3.Load<object>(key, new ES3Settings());
+        }
+
+        public static object Load(string key, string filePath)
+        {
+            return ES3.Load<object>(key, new ES3Settings(filePath));
+        }
+
+        public static object Load(string key, string filePath, ES3Settings settings)
+        {
+            return ES3.Load<object>(key, new ES3Settings(filePath, settings));
+        }
+
+        public static object Load(string key, ES3Settings settings)
+        {
+            return ES3.Load<object>(key, settings);
+        }
+
+
+        public static object Load(string key, object defaultValue)
+        {
+            return ES3.Load<object>(key, defaultValue, new ES3Settings());
+        }
+
+        public static object Load(string key, string filePath, object defaultValue)
+        {
+            return ES3.Load<object>(key, defaultValue, new ES3Settings(filePath));
+        }
+
+        public static object Load(string key, string filePath, object defaultValue, ES3Settings settings)
+        {
+            return ES3.Load<object>(key, defaultValue, new ES3Settings(filePath, settings));
+        }
+
+        public static object Load(string key, object defaultValue, ES3Settings settings)
+        {
+            return ES3.Load<object>(key, defaultValue, settings);
+        }
+
+
+        public static T Load<T>(string key)
+        {
+            return ES3.Load<T>(key, new ES3Settings());
+        }
+
+        public static T Load<T>(string key, string filePath)
+        {
+            return ES3.Load<T>(key, new ES3Settings(filePath));
+        }
+
+        public static T Load<T>(string key, string filePath, ES3Settings settings)
+        {
+            return ES3.Load<T>(key, new ES3Settings(filePath, settings));
+        }
+
+        public static T Load<T>(string key, ES3Settings settings)
+        {
+            return ES3.Load<T>(key, settings);
+        }
+
+        public static T Load<T>(string key, T defaultValue)
+        {
+            return ES3.Load<T>(key, defaultValue, new ES3Settings());
+        }
+
+        public static T Load<T>(string key, string filePath, T defaultValue)
+        {
+            return ES3.Load<T>(key, defaultValue, new ES3Settings(filePath));
+        }
+
+        public static T Load<T>(string key, string filePath, T defaultValue, ES3Settings settings)
+        {
+            return ES3.Load<T>(key, defaultValue, new ES3Settings(filePath, settings));
+        }
+
+        public static T Load<T>(string key, T defaultValue, ES3Settings settings)
+        {
+            return ES3.Load<T>(key, defaultValue, settings);
+        }
+
+        #endregion
 }
