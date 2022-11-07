@@ -1,0 +1,23 @@
+{
+    "3": {
+        "configId": 3,
+        "name": "NPC3",
+        "configInt": 3,
+        "id": "3",
+        "configStr": "C"
+    },
+    "2": {
+        "configId": 2,
+        "name": "NPC2",
+        "configInt": 2,
+        "id": "2",
+        "configStr": "B"
+    },
+    "1": {
+        "configId": 1,
+        "name": "NPC1",
+        "configInt": 1,
+        "id": "1",
+        "configStr": "A"
+    }
+}
