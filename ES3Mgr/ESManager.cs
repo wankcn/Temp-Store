@@ -6,9 +6,40 @@ using UnityEngine;
 using ES3Internal;
 
 
+
+public enum E_StoreMode { ALPHA, BETA, RTL }
+
 public class ESManager
 {
-    public static readonly string FILEPATH = "./DataS/_";
+    public static readonly string ALPHA_SAVE_PATH = "ES3DataFiles/";
+        
+    // BETA目录 Directory = DataPath
+    public static readonly string BETA_SAVE_PATH = "../ES3DataFiles/";
+    public static readonly string FILEPATH = "neon_data.es3";
+
+    
+    /// <summary>
+    /// 设置存储路径 游戏启动时修改
+    /// </summary>
+    /// <param name="mode"></param>
+    public static void SetStorePath(E_StoreMode mode)
+    {
+        if (mode == E_StoreMode.BETA)
+        {
+            ES3Settings.defaultSettings.directory = ES3.Directory.DataPath;
+            ES3Settings.defaultSettings.path = BETA_SAVE_PATH + FILEPATH;
+        }
+        else if (mode == E_StoreMode.ALPHA)
+        {
+            ES3Settings.defaultSettings.directory = ES3.Directory.DataPath;
+            ES3Settings.defaultSettings.path = ALPHA_SAVE_PATH + FILEPATH;
+        }
+        else if(mode == E_StoreMode.RTL)
+        {
+            ES3Settings.defaultSettings.directory = ES3.Directory.PersistentDataPath;
+            ES3Settings.defaultSettings.path = FILEPATH;
+        }
+    }
 
     #region Save
 
