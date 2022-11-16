@@ -31,10 +31,12 @@ dotnet --list-sdks
 **root** 指定是当前工程所在路径，一般都是Assets目录的父级
 
 - **Exe路径：** `root/Tools/luban_client_server/LubanClientServer.exe`
-- **C#代码导出目录：** `root/Assets/Neon/Scripts/VOs`
-- **root.xml文件路径：** `root/Excel/Defines/__root__.xml`
+- **C#代码导出目录：** `root/Assets/Neon/Scripts/VOTest` 没有目录新建
+- **root.xml文件路径：** `root/Excel/__root__.xml`
 - **配置数据（Excel）目录：** `root/Excel`
-- **资源（Json）导出目录:** `root/Assets/Neon/Datas/LuBanTest`
+- **资源（Json）导出目录:** `root/Assets/Neon/Datas/LuBanTest` 没有目录新建
+
+⚠上面的C#导出和Josn导出两个目录在当前工程中已经存在，并且拥有相应的配置，你自己的分支或工程中需要先新建这两个测试目录，跑通测试流程以后再把目录设置为工程中的实际目录，这是因为错误的操作可能会导致覆盖或删除已经存在的数据。
 
 如果代码生成栏配置为空或者不是下面代码，复制下面的代码填充
 
@@ -74,7 +76,7 @@ code_cs_unity_json,data_json
 
 使用方法：**DataManager.Instance.GetVOData<`vo_name`>(`json_file_name`);**
 
-代码示例：
+**代码示例：**
 
 ```csharp
 // 获取VO对象
@@ -92,6 +94,6 @@ var vo = voData.Get(1005);
 **VO_DATA_PATH** 即Json数据的导出目录
 
 ```csharp
-private const string VO_DATA_PATH = "Neon/Datas/LubanTest/";
+private const string VO_DATA_PATH = "Neon/Datas/Configs/";
 ```
 
