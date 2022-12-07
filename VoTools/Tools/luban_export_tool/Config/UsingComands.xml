@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LubanCommandSetting xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ExePath param="C:\Users\Admin\Desktop\cyberneon_character_status_branch\Tools\luban_client_server\Luban.ClientServer.exe" />
+  <OutputMode command="-j" param="cfg --" />
+  <RootDefinePath command="-d" param="C:\Users\Admin\Desktop\cyberneon_character_status_branch\Excel\__root__.xml" />
+  <OutputCodePath command="--output_code_dir" param="C:\Users\Admin\Desktop\cyberneon_character_status_branch\Assets\Neon\Scripts\VOs" />
+  <OutputDataPath command="--output_data_dir" param="C:\Users\Admin\Desktop\cyberneon_character_status_branch\Assets\Neon\Datas\Configs" />
+  <DataSourcePath command="--input_data_dir" param="C:\Users\Admin\Desktop\cyberneon_character_status_branch\Excel" />
+  <GenTypes command="--gen_types" param="code_cs_unity_json,data_json" />
+  <Service command="-s" param="client" />
+</LubanCommandSetting>
