@@ -4,7 +4,7 @@ using GameNeon.Managers;
 using GameNeon.VOS.Inventory;
 
 
-namespace WrnRuo
+namespace GameNeon.Modules.InventoryModule
 {
     /// <summary>
     /// 重新定义物品数据结构，item容器为id和amount的格式
@@ -18,66 +18,63 @@ namespace WrnRuo
         // 记录空数据的index
         private List<int> isNullIndexList;
 
-        public ItemContainer(string characterID)
+        public ItemContainer()
         {
             // 分配空间并加载数据
             AllocateSpace();
-            m_List = LoadData(characterID);
+        }
 
-            // 构建检索表
-            int index = 0;
-            foreach (var item in m_List) checkList.Add(item.itemID, index++);
+        public ItemContainer(string loadID)
+        {
+            // 分配空间并加载数据
+            AllocateSpace();
+            m_List = LoadData(loadID);
+            if (m_List != null)
+            {
+                // 构建检索表
+                int index = 0;
+                foreach (var item in m_List) checkList.Add(item.itemID, index++);
+            }
+            else
+            {
+                m_List = new List<InventoryItem>();
+            }
         }
 
         // 一个用于测试的构造函数
         public ItemContainer(List<InventoryItem> dataList)
         {
             AllocateSpace();
-            if (dataList.Count != 0) m_List = dataList;
-            else Log.D($"数据为空！！");
-
-            // 构建搜索表
-            int index = 0;
-            foreach (var item in m_List) checkList.Add(item.itemID, index++);
+            if (dataList.Count != 0)
+            {
+                m_List = dataList;
+                // 构建搜索表
+                int index = 0;
+                foreach (var item in m_List) checkList.Add(item.itemID, index++);
+            }
         }
-
 
         #region 将数据以角色为单位进行存储 Save / Load
 
         private List<InventoryItem> LoadData(string id)
         {
-            // 如果不存在读取表格信息并存储一份，保证加载时一定有数据
-            if (!LocalSaveManager.KeyExists(id + m_key))
-            {
-                // 根据角色iD拿当前角色的背包ID
-                var bagId = InventoryManager.Instance.GetCharacterBagID(id);
-                DataLoader(bagId);
-                LocalSaveManager.Save(id + m_key, m_List);
-            }
-
-            // 此时加载已经存在数据，使m_list加载时不可能为空，除非数据表配置异常
+            // 对这里进行修改！！
+            // 加载数据改为加载存档，如果没有返回空，外部自己加载预设，不在这个类做处理
+            if (!LocalSaveManager.KeyExists(id + m_key)) return null;
             return (List<InventoryItem>)LocalSaveManager.Load(id + m_key);
         }
 
-        private void DataLoader(int bagID)
-        {
-            var bagVO = DataManager.Instance.GetVOData<BagConfigTB>("BagConfig");
-            if (!bagVO.HasVO(bagID)) return;
-            // 存在BagID 进行数据初始化
-            var bagIDs = bagVO[bagID].ItemInit;
-            var bagNums = bagVO[bagID].ItemNumInit;
 
-            if (bagIDs.Count == bagNums.Count)
-            {
-                for (int i = 0; i < bagIDs.Count; i++)
-                    m_List.Add(new InventoryItem(bagIDs[i], bagNums[i]));
-            }
-            else
-            {
-                Log.D($"策划表异常！！！请检查初始背包ID和数量列表长度是否相等！");
-            }
+        public bool IsNoneData()
+        {
+            return m_List == null || m_List.Count == 0;
         }
 
+
+        public void DeleteData(string id)
+        {
+            LocalSaveManager.DeleteKey(id + m_key);
+        }
 
         public void SaveData(string id)
         {
@@ -85,11 +82,6 @@ namespace WrnRuo
             var resList = GetItemList();
             LocalSaveManager.Save(id + m_key, resList);
             // ClearData(); // 不需要清空避免手动保持后重新加载数据，数据在每次初始化会清空
-        }
-
-        public void DeleteData(string id)
-        {
-            LocalSaveManager.DeleteKey(id + m_key);
         }
 
         #endregion
@@ -128,17 +120,23 @@ namespace WrnRuo
             }
         }
 
-
         /// <summary>
         /// 移除指定数量的物品
         /// </summary>
         /// <param name="ID">物品ID</param>
         /// <param name="removeAmount">数量</param>
-        public void RemoveItem(int ID, int removeAmount)
+        public int RemoveItem(int ID, int removeAmount)
         {
             // 需要删除的物品一定存在index 不能存在返回
             int index = GetIndexInListByID(ID);
-            if (index == -1) return;
+            if (index == -1)
+            {
+                Log.D($"物品{ID}并不存在，执行失败");
+                return -1;
+            }
+
+            // 获得实际删除的数值
+            int real = m_List[index].itemAmount >= removeAmount ? removeAmount : m_List[index].itemAmount;
             // 如果物品还有剩余，修改list内容
             if (m_List[index].itemAmount > removeAmount)
             {
@@ -166,7 +164,38 @@ namespace WrnRuo
 
                 Log.D($"减去超载{residue}" !);
             }
+
+            return real;
         }
+
+        /// <summary>
+        /// 通过ID直接删除某一物品
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        public int RemoveItemByID(int ID)
+        {
+            int index = GetIndexInListByID(ID);
+            if (index == -1)
+            {
+                Log.D($"物品{ID}并不存在，执行失败");
+                return -1;
+            }
+
+            int real = m_List[index].itemAmount;
+            m_List[index] = new InventoryItem { itemID = 0, itemAmount = 0 };
+            // 将物品ID从checkList中删除
+            checkList.Remove(ID);
+            // 记录删除位置的index，用于下次新增覆盖
+            isNullIndexList.Add(index);
+            return real;
+        }
+
+        public void RemoveAllItem()
+        {
+            ClearData();
+        }
+
 
         /// <summary>
         /// 通过物品ID找到物品在list中的位置
@@ -200,6 +229,10 @@ namespace WrnRuo
             return resList;
         }
 
+        public bool IsHasItem(int itemID)
+        {
+            return checkList.ContainsKey(itemID);
+        }
 
         public Dictionary<int, int>.KeyCollection GetCheckListKeys()
         {
